@@ -55,12 +55,12 @@ Scripts
 Core U-Net architecture
 -----
 
-.. figure:: figures/UNet.PNG
+.. figure:: figures/UNet.png
 
 WF-UNet architecture
 -----
 
-.. figure:: figures/WFNet.PNG
+.. figure:: figures/WFNet.png
 
   
 Data and pretrained models
