@@ -1,0 +1,1 @@
+The files "train_test_2016-2021_input-length_12_img-ahead_6_rain-threshhold_50.h5" and "train_test_2016-2021_input-length_12_img-ahead_6_rain-threshhold_20.h5" will be created in this directory when the create_datesets.py script is run.

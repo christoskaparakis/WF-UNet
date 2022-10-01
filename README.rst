@@ -26,7 +26,13 @@ The required modules can be installed  via:
     
 Quick Start
 ~~~~~~~~~~~
-Tthe models which use only precipitation images can be trained running the following command:
+After placing the the raw .nc datasets in the "dataset" folder, the following command will create the final dataset in a HDF5 format, contain the training and test set ready to use for modelling.
+
+.. code:: bash
+
+    python create_datasets.py 
+
+The models which use only precipitation images can be trained running the following command:
 
 .. code:: bash
 

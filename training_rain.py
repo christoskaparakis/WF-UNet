@@ -17,7 +17,7 @@ tf.random.set_seed(2)
 
 # Select dataset
 filename = (
-    "/workspace/persistent/ck/final_datasets/train_test_2016-2021_input-length_12_img-ahead_1_rain-threshhold_50.h5"
+    "final_dataset/train_test_2016-2021_input-length_12_img-ahead_1_rain-threshhold_50.h5"
 )
 
 
@@ -33,43 +33,12 @@ except:
 # To numpy array
 data_train = f["/train/tp_images"][:100,:,:96,:96]  # remove the slicing later
 max_train = 0.024250908
-# data_train = (data_train - min_train_val)/(max_train - min_train_val)#normalize data
 data_train = data_train/max_train #normalize data
-
-# data_train = np.moveaxis(data_train, 1, -1) # only for base UNET
-
-# data_train1 = f["/train/u100_images"][:10,:,:96,:96]
-# data_train2 = f["/train/v100_images"][:10,:,:96,:96]
-# data_wind_speed = np.sqrt((data_train1**2)+data_train2**2)
-
-# data_wind_max = 42.895767
-
-# data_wind_speed = data_wind_speed/data_wind_max
-
-# # # data_wind_direction = np.degrees(np.arctan2(data_train1, data_train2))
-
-# # data_train = np.stack((data_train, data_wind_speed), axis=-1)
-# del data_train1
-# del data_train2
-
-# data_temp = f["/train/sp_images"][:10,:,:96,:96]
-# data_temp = data_temp/data_temp.max()
-
 
 # Pick validation set
 p = 0.2
-# data_val = data_train[-int(len(data_train) * p) :]
-# data_train = data_train[: -int(len(data_train) * p)]
-
 data_val = data_train[-int(len(data_train) * p) :]
 data_train = data_train[: -int(len(data_train) * p)]
-
-# data_wind_speed_val = data_wind_speed[-int(len(data_wind_speed) * p) :]
-# data_wind_speed_train = data_wind_speed[: -int(len(data_wind_speed) * p)]
-
-# data_temp_val = data_temp[-int(len(data_temp) * p) :]
-# data_temp_train = data_temp[: -int(len(data_temp) * p)]
-
 
 
 ##---- Training model ----##
@@ -78,7 +47,7 @@ data_train = data_train[: -int(len(data_train) * p)]
 lags = 12
 lat = 96
 long = 96
-feats = 1 #if len(data_train.shape)==4 else data_train.shape[-1]
+feats = 1
 feats_out = 1
 convFilters = 16
 dropoutRate = 0.5
@@ -99,14 +68,9 @@ custom_mse = MSE_denormalized(
 
 
 # Instantiation
-# model = UNet_3DDR(lags, lat, long, feats, feats_out, convFilters, dropoutRate)
-# model = UNet_InceptionRes3DDR(lags, lat, long, feats, feats, convFilters, dropoutRate)
+# model = Core_UNet(lags, lat, long, feats, feats_out, convFilters, dropoutRate)
 # model = UNet_AsymmetricInceptionRes3DDR(lags, lat, long, feats, feats, convFilters, dropoutRate)
 model = broad_UNet(lags, lat, long, feats, feats, convFilters, dropoutRate)
-# model = UNet_original(lags, lat, long, feats, feats_out, convFilters, dropoutRate)
-# model = SmaAt_UNet(lags, lat, long, feats, feats, convFilters, dropoutRate)
-# model = new_UNet(lags, lat, long, feats, feats_out, convFilters, dropoutRate)
-# model = MLF_UNet(lags, lat, long, feats, feats_out, convFilters, dropoutRate)
 
 model.compile(
     loss=custom_mse.mse_denormalized_per_image,
@@ -116,12 +80,12 @@ model.compile(
         custom_mse.mse_denormalized_per_pixel,
     ],
 )
-# model.compile(loss=loss, optimizer=optimizer, metrics=[metric])
+
 model.summary()
 
 
 # Checkpoint to save best model
-filepath = "/workspace/persistent/ck/saved_models_precipitation/best_model.hdf5"
+filepath = "saved_models/best_model.hdf5"
 checkpoint = ModelCheckpoint(
     filepath,
     monitor="val_loss",
@@ -135,17 +99,9 @@ reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=10, min_l
 callbacks_list = [checkpoint,early_stop,reduce_lr]
 
 
-# Instantiating generators
-# for one stream
+# Instantiating generators for single stream models
 training_generator = DataGenerator(data_train, batch_size, lags,multistream=False, steps_ahead=2)
 validation_generator = DataGenerator(data_val, batch_size, lags,multistream=False, steps_ahead=2)
-
-#for dual stream
-# training_generator = DataGenerator([data_train,data_wind_speed_train], batch_size, lags,multistream=True)
-# validation_generator = DataGenerator([data_val,data_wind_speed_val], batch_size, lags,multistream=True)
-
-# training_generator = DataGenerator([data_train,data_temp_train], batch_size, lags,multistream=True)
-# validation_generator = DataGenerator([data_val,data_temp_val], batch_size, lags,multistream=True)
 
 
 # Training

@@ -12,9 +12,8 @@ from generators import DataGeneratorPrecipitationData as DataGenerator
 ##---- Evaluating model saved in "saved_models_precipitation/best_model.hdf5" ----##
 
 # Select dataset
-# filename = "dataset_precipitation/Data_20/train_test_2016-2019_input-length_12_img-ahead_6_rain-threshhold_20.h5"
 filename = (
-    "final_datasets/train_test_2016-2021_input-length_12_img-ahead_6_rain-threshhold_50.h5"
+    "final_dataset/train_test_2016-2021_input-length_12_img-ahead_6_rain-threshhold_50.h5"
 )
 
 
@@ -24,19 +23,20 @@ try:
 except:
 	raise Exception('\n\nNo data was found! Get and decompress the data as indicated first.')
     
+# load rain test images
 max_train_val = 0.024250908
-# Test data to numpy array
-tp_test = f["/test/tp_images"][1790:1810,:,:96,:96]  # remove the slicing later
+tp_test = f["/test/tp_images"][:,:,:96,:96] # test data to numpy array
 data_test = tp_test/max_train_val #normalize data
 
+# load wind speed test images
 data_wind_max = 42.895767
-data_test1 = f["/test/u100_images"][1790:1810,:,:96,:96]
-data_test2 = f["/test/v100_images"][1790:1810,:,:96,:96]
+data_test1 = f["/test/u100_images"][:,:,:96,:96]
+data_test2 = f["/test/v100_images"][:,:,:96,:96]
 data_wind_speed = np.sqrt((data_test1**2)+data_test2**2)
 del data_test1
 del data_test2
 
-data_wind_speed_test = data_wind_speed/data_wind_max
+data_wind_speed_test = data_wind_speed/data_wind_max # normalize
 
 
 #Parameters
@@ -59,13 +59,10 @@ metrics = [denormalized_mse.mse_denormalized_per_image, denormalized_mse.mse_den
 
 
 #Loade model and compile with custom metrics
-filepath="saved_models_precipitation/best_model_rain_wind_mlf_1_ahead.hdf5"
+filepath="saved_models/best_model_rain_wind_mlf_1_ahead.hdf5"
 try:
-    # model = broad_UNet(12, 96, 96, 1, 1, 2, 0.5)
-    # model = UNet_original(12, 96, 96, 1, 1, 16, 0.5)
-    model = MLF_UNet(12, 96, 96, 1, 1, 16, 0.5)
+    model = Late_WF_UNet(12, 96, 96, 1, 1, 16, 0.5)
     model.load_weights(filepath)
-	# model = load_model(filepath, compile=False)
 except:
 	raise Exception('\n\nNo trained model was found! Run first the trainig script or request pretrained model.')
 model.compile(loss=denormalized_mse.mse_denormalized_per_image, optimizer=optimizer, metrics=metrics)
@@ -75,26 +72,23 @@ model.compile(loss=denormalized_mse.mse_denormalized_per_image, optimizer=optimi
 test_generator = DataGenerator([data_test,data_wind_speed_test], batch_size, lags,multistream=True, steps_ahead=4)
 
 
-# #Evaluate with generator 
-# print("\nEvaluating...")
-# result = model.evaluate(test_generator)
+#Evaluate with generator 
+print("\nEvaluating...")
+result = model.evaluate(test_generator)
 
-# print("\n>>> Results evaluation:")
-# print(" - MSE:", result[2])
-# print(" - MSE per image:", result[1])
-# print(" - Acc:", result[3])
-# print(" - Precision:", result[4])
-# print(" - Recall:", result[5])
+print("\n>>> Results evaluation:")
+print(" - MSE:", result[2])
+print(" - MSE per image:", result[1])
+print(" - Acc:", result[3])
+print(" - Precision:", result[4])
+print(" - Recall:", result[5])
 
 
 
-for t in range(len(data_test)):
-    print(t)
-    #Generating targets and labels
+for t in range(1, 20, 2):
+    
     x = data_test[t:(t+2), :lags, :, :]
     x = np.expand_dims(x, axis=-1)
-
-    
 
     x1 = data_wind_speed_test[t:(t+2), :lags, :, :]
     x1 = np.expand_dims(x1, axis=-1)

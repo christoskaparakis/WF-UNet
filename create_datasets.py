@@ -17,7 +17,7 @@ num_pixels = imgSize1 * imgSize2
 def create_dataset(input_length, image_ahead, rain_amount_thresh):
     # Creating a dataset for training and testing.
     # create target file name
-    filename = f"final_datasets/train_test_2016-2021_input-length_{input_length}_img-ahead_{image_ahead}_rain-threshhold_{int(rain_amount_thresh * 100)}.h5"
+    filename = f"final_dataset/train_test_2016-2021_input-length_{input_length}_img-ahead_{image_ahead}_rain-threshhold_{int(rain_amount_thresh * 100)}.h5"
 
     # create and open h5 file
     with h5py.File(filename, "w", rdcc_nbytes=1024 ** 3) as f:
@@ -244,4 +244,4 @@ def create_dataset(input_length, image_ahead, rain_amount_thresh):
 
 if __name__ == "__main__":
     create_dataset(input_length=12, image_ahead=6, rain_amount_thresh=0.2)
-    # create_dataset(input_length=12, image_ahead=6, rain_amount_thresh=0.5)
+    create_dataset(input_length=12, image_ahead=6, rain_amount_thresh=0.5)

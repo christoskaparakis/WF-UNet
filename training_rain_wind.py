@@ -17,7 +17,7 @@ tf.random.set_seed(2)
 
 # Select dataset
 filename = (
-    "/workspace/persistent/ck/final_datasets/train_test_2016-2021_input-length_12_img-ahead_1_rain-threshhold_50.h5"
+    "final_dataset/train_test_2016-2021_input-length_12_img-ahead_1_rain-threshhold_50.h5"
 )
 
 
@@ -36,9 +36,9 @@ max_train = 0.024250908
 data_train = data_train/max_train #normalize data
 
 
-data_train1 = f["/train/u100_images"][:100,:,:96,:96]
-data_train2 = f["/train/v100_images"][:100,:,:96,:96]
-data_wind_speed = np.sqrt((data_train1**2)+data_train2**2)
+data_train1 = f["/train/u100_images"][:100,:,:96,:96] # load wind u component
+data_train2 = f["/train/v100_images"][:100,:,:96,:96] # load wind v component
+data_wind_speed = np.sqrt((data_train1**2)+data_train2**2) # pythagorean theorem to get wind speed
 data_wind_max = 42.895767
 data_wind_speed = data_wind_speed/data_wind_max
 del data_train1
@@ -84,7 +84,10 @@ custom_mse = MSE_denormalized(
 
 
 # Instantiation
-model = MIF_UNet(lags, lat, long, feats, feats_out, convFilters, dropoutRate)
+model = Late_WF_UNet(lags, lat, long, feats, feats_out, convFilters, dropoutRate)
+# model = Early_WF_UNet(lags, lat, long, feats, feats_out, convFilters, dropoutRate)
+# model = Inter_WF_UNet(lags, lat, long, feats, feats_out, convFilters, dropoutRate)
+
 
 model.compile(
     loss=custom_mse.mse_denormalized_per_image,
@@ -98,7 +101,7 @@ model.summary()
 
 
 # Checkpoint to save best model
-filepath = "/workspace/persistent/ck/saved_models_precipitation/best_model.hdf5"
+filepath = "saved_models/best_model.hdf5"
 checkpoint = ModelCheckpoint(
     filepath,
     monitor="val_loss",
