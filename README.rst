@@ -74,7 +74,7 @@ Data and pretrained models
 
 In order to download the data or any of the trained models, please email to the following address:
 
-siamak.mehrkanoon@maastrichtuniversity.nl
+s.mehrkanoon@uu.nl
 
 The data must be downloaded and unzipped inside the 'dataset/' directory as indicated in the txt files inside them.
  
