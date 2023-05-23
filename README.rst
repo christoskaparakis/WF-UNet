@@ -78,4 +78,18 @@ s.mehrkanoon@uu.nl
 
 The data must be downloaded and unzipped inside the 'dataset/' directory as indicated in the txt files inside them.
  
+Citation
+-----
 
+If you use our data and code, please cite the paper using the following bibtex reference:
+
+```
+@article{kaparakis2023wfunet,
+  title={WF-UNet: Weather Fusion UNet for Precipitation Nowcasting},
+  author={Kaparakis, Christos and Mehrkanoon, Siamak},
+  year={2023},
+  eprint={2302.04102},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG}
+}
+```
