@@ -85,13 +85,13 @@ Citation
 
 If you use our data and code, please cite the paper using the following bibtex reference:
 
-```
-@article{kaparakis2023wfunet,
-  title={WF-UNet: Weather Fusion UNet for Precipitation Nowcasting},
-  author={Kaparakis, Christos and Mehrkanoon, Siamak},
-  year={2023},
-  eprint={2302.04102},
-  archivePrefix={arXiv},
-  primaryClass={cs.LG}
-}
-```
+.. code:: bibtex
+
+    @article{kaparakis2023wfunet,
+      title={WF-UNet: Weather Fusion UNet for Precipitation Nowcasting},
+      author={Kaparakis, Christos and Mehrkanoon, Siamak},
+      year={2023},
+      eprint={2302.04102},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+    }
