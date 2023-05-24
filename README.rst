@@ -1,7 +1,7 @@
 WF-UNet: Weather Data Fusion using 3D-UNet for Precipitation Nowcasting
 ========
 
-The official code of the following paper: (link to paper)
+The official code of the following paper: https://arxiv.org/abs/2302.04102
 
 Results
 -----
